@@ -1,0 +1,33 @@
+high_sparrow:
+  image:
+    path: "/deps-platform/deps-high-sparrow"
+  resources: {}
+
+high_sparrow_settings:
+  ENV: other
+
+  LOG_LEVEL: "INFO"
+
+  DATABASE_REQUIRE_SECURE_TRANSPORT: false
+
+migration_settings:
+  DATABASE_REQUIRE_SECURE_TRANSPORT: false
+
+high_sparrow_consumer:
+  image:
+    path: "/deps-platform/deps-high-sparrow"
+
+migrator:
+  image:
+    path: "/deps-platform/deps-high-sparrow-migrator"
+
+helm:
+  helm_logs_job_enabled: false
+
+csi:
+  vault_namespace: 'k8s-other'
+  roleName: 'k8s-other'
+  vaultKubernetesMountPath: 'kubernetes-other'
+
+service_account:
+  serviceAccountName: 'deps-other'

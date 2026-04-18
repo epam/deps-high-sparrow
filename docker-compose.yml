@@ -1,0 +1,16 @@
+version: "3.4"
+
+services:
+  api:
+    image: "high-sparrow-dev"
+    container_name: "deps-high-sparrow"
+    command: python -m deps_high_sparrow serve
+
+  consumer:
+    image: "high-sparrow-dev"
+    container_name: "deps-high-sparrow-consumer"
+    command: python -m deps_high_sparrow dispatch
+
+  migrator:
+    image: "high-sparrow-migrator"
+    container_name: deps-high-sparrow-migrator

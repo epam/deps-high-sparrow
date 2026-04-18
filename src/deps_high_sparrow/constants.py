@@ -1,0 +1,25 @@
+PROJECT_NAME = "high-sparrow"
+DESCRIPTION = "Service for validating data extraction results"
+V1_PREFIX = "/v1"
+BASE_API_PREFIX = "/api/high-sparrow"
+V1_API_PREFIX = BASE_API_PREFIX + V1_PREFIX
+SWAGGER_DOC_URL = "/docs"
+
+DOCUMENTS_EXCHANGER = "Documents"
+DOCUMENT_TYPE_EXCHANGER = "DocumentType"
+EXTRACTION_EXCHANGER = "Extractor"
+
+EVENTS_QUEUE = "high-sparrow-events"
+
+COMMANDS_QUEUE = "validation-commands"
+
+COMMANDS_CHANNEL = "HighSparrowCommands"
+COMMANDS_REPLIES_CHANNEL = "HighSparrowCommandsReplies"
+VALIDATION_SERVICE_CHANNEL = "ValidationService"
+
+MIN_LENGTH_FIELD_VALIDATORS = 1
+MAX_EXTERNAL_VALIDATORS = 10
+MAX_LENGTH_DESCRIPTION_FIELD_VALIDATORS = 500
+MAX_LENGTH_NAME_FIELD_VALIDATORS = 100
+
+ENCODED_SLASH = "@2F"

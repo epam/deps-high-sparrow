@@ -1,0 +1,264 @@
+secrets:
+  deps_high_sparrow:
+    secretName: deps-high-sparrow
+  high_sparrow_database:
+    secretName: high-sparrow-database
+  common_secret:
+    secretName: common-secret
+  rabbitmq_password:
+    secretName: rabbitmq-password
+  security_certs:
+    secretName: security-certs
+  kafka_secrets:
+    secretName: kafka-secrets
+  database_ssl_secret:
+    secretName: database-ssl-secret
+  telemetry_secrets:
+    secretName: telemetry-secrets
+
+helm_logs_job:
+  serviceAccountName: gitlab-ci
+  image:
+    path: "/base/kubernetes-helm"
+    pullPolicy: IfNotPresent
+    tag: "0.1.1"
+  resources: {}
+
+registry: ""
+env: ""
+
+high_sparrow:
+  replicaCount: 1
+  image:
+    path: "/deps-dev-x01/deps-high-sparrow"
+    pullPolicy: IfNotPresent
+    tag: ""
+  imagePullSecrets: artifactory
+  service:
+    type: ClusterIP
+    port: 8000
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+high_sparrow_consumer:
+  replicaCount: 1
+  image:
+    path: '/deps-dev-x01/deps-high-sparrow'
+    pullPolicy: IfNotPresent
+    tag: ''
+  imagePullSecrets: artifactory
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+
+certs_location:
+  certs_default_path: "/tmp/ssl"
+  database_sslcerts_path: "/home/dbcerts"
+
+high_sparrow_settings:
+  ENV: dev
+
+  DATABASE_PORT: '5432'
+  DATABASE_DRIVER: psycopg2
+  DATABASE_DIALECT: postgresql
+  DATABASE_REQUIRE_SECURE_TRANSPORT: false
+  DATABASE_SSLKEY_PATH: "/home/dbcerts/tls.key"
+  DATABASE_SSLCERT_PATH: "/home/dbcerts/tls.crt"
+  DATABASE_SSLROOTCERT_PATH: "/home/dbcerts/root.crt"
+
+  AUTH_VERIFY_SSL: false
+
+  LOG_LEVEL: "INFO"
+  DOCUMENTATION_ENABLED: "true"
+
+  RABBITMQ_TLS_ENABLED: false
+
+  KAFKA_GROUP_ID: high-sparrow
+  KAFKA_AUTO_OFFSET_RESET: earliest
+  KAFKA_SECURITY_ENABLED: false
+
+  EXTRACTION_URL: "http://extraction:8000"
+
+  # Azure Service Bus
+  ASB_SUBSCRIPTION_STRATEGY: 'no_preparation'
+
+  # Telemetry
+  INSTRUMENTATION_ENABLED: false
+  SERVICE_NAME: deps-high-sparrow
+  EXPORTER_TYPE: azure
+
+helm:
+  helm_logs_job_enabled: false
+
+message_broker_asb_without_manage_permission:
+  enabled: false
+
+csi:
+  csi_default_name: deps-high-sparrow
+  vault_namespace: 'k8s-dev'
+  roleName: 'k8s-dev'
+  vaultKubernetesMountPath: 'kubernetes-dev'
+
+secrets_location:
+  secrets_default_path: "/mnt/secrets-store"
+
+service_account:
+  serviceAccountName: 'deps-develop'
+
+secret_project_id:
+  id: ""
+
+azure_kv_settings:
+  keyvaultName: ""
+  tenantId: ""
+  userAssignedIdentityID: ""
+  resourceGroup: ""
+  subscriptionId: ""
+
+vault_settings:
+  enabled: false
+  hashicorp_vault: false
+  azure_key_vault: false
+  gcp_secret_manager: false
+  aws_secret_manager: false
+  aws_secret_manager_region: ''
+
+high_sparrow_vault_enabled:
+  env:
+  - name: MESSAGING_DRIVER
+    valueFrom:
+      secretKeyRef:
+        name: deps-high-sparrow
+        key: message-broker-driver
+  - name: MESSAGE_BROKER_CONNECTION_STRING
+    valueFrom:
+      secretKeyRef:
+        name: deps-high-sparrow
+        key: message-broker-connection-string
+  - name: DATABASE_HOST
+    valueFrom:
+      secretKeyRef:
+        name: deps-high-sparrow
+        key: database-host
+  - name: DATABASE_DB
+    valueFrom:
+      secretKeyRef:
+        name: deps-high-sparrow
+        key: database-db
+  - name: DATABASE_USER
+    valueFrom:
+      secretKeyRef:
+        name: deps-high-sparrow
+        key: user
+  - name: DATABASE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: deps-high-sparrow
+        key: password
+
+high_sparrow_vault_disabled:
+  env:
+  - name: MESSAGING_DRIVER
+    valueFrom:
+      secretKeyRef:
+        name: common-secret
+        key: message-broker-driver
+  - name: MESSAGE_BROKER_CONNECTION_STRING
+    valueFrom:
+      secretKeyRef:
+        name: common-secret
+        key: message-broker-connection-string
+  - name: DATABASE_HOST
+    valueFrom:
+      secretKeyRef:
+        name: common-secret
+        key: database-host
+  - name: DATABASE_DB
+    valueFrom:
+      secretKeyRef:
+        name: high-sparrow-database
+        key: database-db
+  - name: DATABASE_USER
+    valueFrom:
+      secretKeyRef:
+        name: high-sparrow-database
+        key: user
+  - name: DATABASE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: high-sparrow-database
+        key: password
+
+high_sparrow_consumer_vault_enabled:
+  env:
+  - name: MESSAGING_DRIVER
+    valueFrom:
+      secretKeyRef:
+        name: deps-high-sparrow
+        key: message-broker-driver
+  - name: MESSAGE_BROKER_CONNECTION_STRING
+    valueFrom:
+      secretKeyRef:
+        name: deps-high-sparrow
+        key: message-broker-connection-string
+  - name: DATABASE_HOST
+    valueFrom:
+      secretKeyRef:
+        name: deps-high-sparrow
+        key: database-host
+  - name: DATABASE_DB
+    valueFrom:
+      secretKeyRef:
+        name: deps-high-sparrow
+        key: database-db
+  - name: DATABASE_USER
+    valueFrom:
+      secretKeyRef:
+        name: deps-high-sparrow
+        key: user
+  - name: DATABASE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: deps-high-sparrow
+        key: password
+
+high_sparrow_consumer_vault_disabled:
+  env:
+  - name: MESSAGING_DRIVER
+    valueFrom:
+      secretKeyRef:
+        name: common-secret
+        key: message-broker-driver
+  - name: MESSAGE_BROKER_CONNECTION_STRING
+    valueFrom:
+      secretKeyRef:
+        name: common-secret
+        key: message-broker-connection-string
+  - name: DATABASE_HOST
+    valueFrom:
+      secretKeyRef:
+        name: common-secret
+        key: database-host
+  - name: DATABASE_DB
+    valueFrom:
+      secretKeyRef:
+        name: high-sparrow-database
+        key: database-db
+  - name: DATABASE_USER
+    valueFrom:
+      secretKeyRef:
+        name: high-sparrow-database
+        key: user
+  - name: DATABASE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: high-sparrow-database
+        key: password

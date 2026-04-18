@@ -1,0 +1,59 @@
+{{- if .Values.vault_settings.azure_key_vault }}
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: {{ .Values.csi.csi_default_name }}
+spec:
+  provider: azure
+  secretObjects:
+  - data:
+    - key: high-sparrow-db-password
+      objectName: high-sparrow-db-password
+    - key: high-sparrow-db
+      objectName: high-sparrow-db
+    - key: high-sparrow-db-user
+      objectName: high-sparrow-db-user
+    - key: db-host
+      objectName: db-host 
+    - key: message-broker-connection-string
+      objectName: message-broker-connection-string
+    - key: message-broker-driver
+      objectName: message-broker-driver
+    secretName: {{ .Values.secrets.deps_high_sparrow.secretName }}
+    type: Opaque
+  parameters:
+    keyvaultName: {{ .Values.azure_kv_settings.keyvaultName }}
+    tenantId: {{ .Values.azure_kv_settings.tenantId }}
+    vaultKubernetesMountPath: {{ .Values.csi.vaultKubernetesMountPath }}
+    usePodIdentity: "false"
+    useVMManagedIdentity: "true"
+    userAssignedIdentityID: {{ .Values.azure_kv_settings.userAssignedIdentityID }}  
+    resourceGroup:  {{ .Values.azure_kv_settings.resourceGroup }}
+    subscriptionId: {{ .Values.azure_kv_settings.subscriptionId }}
+    objects: |
+      array:      
+        - |
+          objectName: "high-sparrow-db-password"
+          objectType: secret
+
+        - |
+          objectName: "high-sparrow-db"
+          objectType: secret
+
+        - |
+          objectName: "high-sparrow-db-user"
+          objectType: secret
+
+        - |
+          objectName: "db-host"
+          objectType: secret
+      
+        - |
+          objectName: "message-broker-connection-string"
+          objectType: secret
+      
+        - |
+          objectName: "message-broker-driver"
+          objectType: secret
+{{- end }}
+

@@ -1,0 +1,31 @@
+databaseChangeLog:
+- changeSet:
+      id: 1
+      author: Illia Makarov
+      changes:
+      - createTable:
+          tableName: validation_result
+          columns:
+          - column:
+              name: id
+              type: VARCHAR(100)
+              constraints:
+                primaryKey: true
+                primaryKeyName: validation_result_id_pkey
+          - column:
+              name: tenant_id
+              type: VARCHAR(100)
+              constraints:
+                nullable: false
+          - column:
+              name: issues
+              type: JSONB
+              constraints:
+                nullable: true
+      - addUniqueConstraint:
+          columnNames: id, tenant_id
+          tableName: validation_result
+          constraintName: result_id_tenant_id__ukey
+      rollback:
+        - dropTable:
+            tableName: validation_result

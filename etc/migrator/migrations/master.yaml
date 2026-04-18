@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - include:
+      file: ./migrations/01-initial.yaml
+  - include:
+      file: ./migrations/02-add-document-type-table.yaml
+  - include:
+      file: ./migrations/03-add-validation-result-table.yaml
+  - include:
+      file: ./migrations/04-clear-document-type-table.yaml
+  - include:
+      file: ./migrations/05-add-external-validators-column-to-document-type-table.yaml
+  - include:
+      file: ./migrations/06-add-rule-description.yaml
+  - include:
+      file: migrations/07-add-cross-field-validators.yaml
+  - include:
+      file: ./migrations/08-add-cross-field-issues.yaml

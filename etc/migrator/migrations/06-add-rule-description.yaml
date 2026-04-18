@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Oleksandr Rez
+      changes:
+        - sql:
+            # If rule name exceed 100 chars then save full name to description and truncate name to 100 chars
+            sql: "UPDATE document_type SET validators = (SELECT jsonb_agg(CASE WHEN elem->'rules' <> 'null' THEN jsonb_set(elem,'{rules}',(SELECT jsonb_agg(CASE WHEN length(rule->>'name') > 100 THEN jsonb_build_object('name', left(rule->>'name', 100),'description', rule->>'name') || rule - 'name' ELSE rule || '{\"description\": \"\"}' END)FROM jsonb_array_elements(elem->'rules') rule))ELSE elem END)FROM jsonb_array_elements(validators) elem)WHERE validators <> 'null' and jsonb_path_exists(validators, '$[*].rules[0] ? (@ <> null)')"
+
+      rollback:
+        - sql:
+            sql: "UPDATE document_type SET validators = (SELECT jsonb_agg(CASE WHEN elem->'rules' <> 'null' THEN jsonb_set(elem,'{rules}',(SELECT jsonb_agg(CASE WHEN length(rule->>'description') > 100 AND rule->>'name' = left(rule->>'description', 100) THEN jsonb_build_object('name', rule->>'description') || rule - 'name' - 'description' ELSE rule - 'description' END)FROM jsonb_array_elements(elem->'rules') rule))ELSE elem END)FROM jsonb_array_elements(validators) elem)WHERE validators <> 'null' and jsonb_path_exists(validators, '$[*].rules[0] ? (@ <> null)');"
+

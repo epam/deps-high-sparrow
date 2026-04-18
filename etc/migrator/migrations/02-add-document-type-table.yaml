@@ -1,0 +1,52 @@
+databaseChangeLog:
+- changeSet:
+    id: 1
+    author: Alina Izvozchikova
+    changes:
+    - dropTable:
+        tableName: test
+    rollback:
+      - createTable:
+          columns:
+          - column:
+              constraints:
+                primaryKey: true
+                primaryKeyName: test_pkey
+              name: pk
+              type: VARCHAR(50)
+          - column:
+              name: name
+              type: VARCHAR(100)
+          tableName: test
+
+- changeSet:
+      id: 2
+      author: Alina Izvozchikova
+      changes:
+      - createTable:
+          tableName: document_type
+          columns:
+          - column:
+              name: id
+              type: VARCHAR(100)
+              constraints:
+                primaryKey: true
+                primaryKeyName: document_type_id_pkey
+          - column:
+              name: tenant_id
+              type: VARCHAR(100)
+              constraints:
+                nullable: false
+          - column:
+              name: validators
+              type: JSONB
+              constraints:
+                nullable: true
+      - addUniqueConstraint:
+          columnNames: id, tenant_id
+          tableName: document_type
+          constraintName: document_type_id_tenant_id_ukey
+
+      rollback:
+        - dropTable:
+            tableName: document_type

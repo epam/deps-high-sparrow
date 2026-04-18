@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Aleksandr Balykin
+      changes:
+        - sql:
+            sql: "ALTER TABLE public.validation_result ADD COLUMN IF NOT EXISTS cross_field_issues jsonb;"
+
+      rollback:
+        - sql:
+            sql: "ALTER TABLE public.validation_result DROP COLUMN IF EXISTS cross_field_issues;"

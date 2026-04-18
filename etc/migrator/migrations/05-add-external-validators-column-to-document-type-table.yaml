@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Oleksandr Rez
+      changes:
+        - addColumn:
+            tableName: document_type
+            columns:
+            - column:
+                name: external_validators
+                type: JSONB
+                constraints:
+                  nullable: true
+
+      rollback:
+        - dropColumn:
+            columnName: external_validators
+            tableName: document_type

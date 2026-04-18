@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: high-sparrow
+  labels:
+    {{- include "deps-high-sparrow.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.high_sparrow.service.type }}
+  ports:
+    - port: {{ .Values.high_sparrow.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "deps-high-sparrow.selectorLabels" . | nindent 4 }}

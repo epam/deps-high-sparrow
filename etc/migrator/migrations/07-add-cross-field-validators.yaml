@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Vitali Sakolski
+      changes:
+        - sql:
+            sql: "ALTER TABLE public.document_type ADD COLUMN IF NOT EXISTS cross_field_validators jsonb;"
+
+      rollback:
+        - sql:
+            sql: "ALTER TABLE public.document_type DROP COLUMN IF EXISTS cross_field_validators;"
